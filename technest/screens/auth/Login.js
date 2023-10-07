@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import InputBox from "../../components/Forms/InputBox";
 import SubmitButton from "../../components/Forms/SubmitButton";
 
-const Register = ({navigation}) => {
-  const [name, setName] = useState("");
+const Login = ({navigation}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -12,12 +11,12 @@ const Register = ({navigation}) => {
   const handleSubmit = () => {
     try {
       setLoading(true);
-      if (!name || !email || !password) {
+      if (!email || !password) {
         Alert.alert("Please Fill all the fields.");
         setLoading(false);
         return;
       }
-      console.log("Register Data => ", { name, email, password });
+      console.log("Login Data => ", {  email, password });
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -27,14 +26,9 @@ const Register = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Register</Text>
+      <Text style={styles.pageTitle}>Login</Text>
       <View style={{ marginHorizontal: 20 }}>
-        <InputBox
-          title={"Name"}
-          SecureEntry={false}
-          value={name}
-          setValue={setName}
-        />
+       
         <InputBox
           title={"Email"}
           SecureEntry={false}
@@ -54,13 +48,17 @@ const Register = ({navigation}) => {
       </View>
       <SubmitButton
         handleSubmit={handleSubmit}
-        btnName={"Register"}
+        btnName={"Login"}
         loading={loading}
       />
-      <Text style={styles.linkText}>Already registered Please <Text onPress={() => navigation.navigate('Login')} style={styles.link}>Login</Text></Text>
+      <Text style={styles.linkText}>
+        if you don't have account <Text onPress={() => navigation.navigate('Register')} style={styles.link}>Register</Text>
+      </Text>
     </View>
   );
 };
+
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
@@ -87,12 +85,8 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 17,
     textAlign: "center",
-
-
   },
   link: {
-    color: "red"
-  }
+    color: "red",
+  },
 });
-
-export default Register;
