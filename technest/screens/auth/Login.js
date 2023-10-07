@@ -2,13 +2,15 @@ import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
 import React, { useState } from "react";
 import InputBox from "../../components/Forms/InputBox";
 import SubmitButton from "../../components/Forms/SubmitButton";
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     try {
       setLoading(true);
       if (!email || !password) {
@@ -16,13 +18,26 @@ const Login = ({navigation}) => {
         setLoading(false);
         return;
       }
-      console.log("Login Data => ", {  email, password });
       setLoading(false);
+      const {data} = await axios.post('http://192.168.43.6:4000/api/v1/login', {
+        email,password
+      });
+
+      alert(data && data.message);
+      await AsyncStorage.setItem('@auth', JSON.stringify(data));
     } catch (error) {
+      alert(error.response.data.message)
       setLoading(false);
       console.log(error);
     }
   };
+
+  // temp func to check localstorege data
+  const getLocalStorage = async() => {
+    let data = await AsyncStorage.getItem("@auth");
+    console.log(data)
+  }
+  getLocalStorage();
 
   return (
     <View style={styles.container}>

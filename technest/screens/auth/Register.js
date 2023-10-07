@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
 import React, { useState } from "react";
 import InputBox from "../../components/Forms/InputBox";
 import SubmitButton from "../../components/Forms/SubmitButton";
+import axios from "axios";
 
 const Register = ({navigation}) => {
   const [name, setName] = useState("");
@@ -9,7 +10,7 @@ const Register = ({navigation}) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     try {
       setLoading(true);
       if (!name || !email || !password) {
@@ -17,9 +18,14 @@ const Register = ({navigation}) => {
         setLoading(false);
         return;
       }
-      console.log("Register Data => ", { name, email, password });
       setLoading(false);
+      const {data} = await axios.post('http://192.168.43.6:4000/api/v1/register', {
+        name,email,password
+      });
+
+      alert(data && data.message)
     } catch (error) {
+      alert(error.response.data.message)
       setLoading(false);
       console.log(error);
     }
