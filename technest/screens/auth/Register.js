@@ -19,11 +19,13 @@ const Register = ({navigation}) => {
         return;
       }
       setLoading(false);
-      const {data} = await axios.post('http://192.168.43.6:4000/api/v1/register', {
+      const {data} = await axios.post('/register', {
         name,email,password
       });
 
-      alert(data && data.message)
+      alert(data && data.message);
+
+      navigation.navigate("Login")
     } catch (error) {
       alert(error.response.data.message)
       setLoading(false);

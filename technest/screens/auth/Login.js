@@ -1,16 +1,20 @@
 import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../context/authContext";
 import InputBox from "../../components/Forms/InputBox";
 import SubmitButton from "../../components/Forms/SubmitButton";
 import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
+  // global state
+  const [state, setState] = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     try {
       setLoading(true);
       if (!email || !password) {
@@ -18,32 +22,39 @@ const Login = ({navigation}) => {
         setLoading(false);
         return;
       }
-      setLoading(false);
-      const {data} = await axios.post('http://192.168.43.6:4000/api/v1/login', {
-        email,password
-      });
 
+      setLoading(false);
+      const { data } = await axios.post(
+        "/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      setState(data);
+
+      await AsyncStorage.setItem("@auth", JSON.stringify(data));
       alert(data && data.message);
-      await AsyncStorage.setItem('@auth', JSON.stringify(data));
+      navigation.navigate("Home")
     } catch (error) {
-      alert(error.response.data.message)
+      alert(error.response.data.message);
       setLoading(false);
       console.log(error);
     }
   };
 
   // temp func to check localstorege data
-  const getLocalStorage = async() => {
+  const getLocalStorage = async () => {
     let data = await AsyncStorage.getItem("@auth");
-    console.log(data)
-  }
+    console.log(data);
+  };
   getLocalStorage();
 
   return (
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Login</Text>
       <View style={{ marginHorizontal: 20 }}>
-       
         <InputBox
           title={"Email"}
           SecureEntry={false}
@@ -67,7 +78,13 @@ const Login = ({navigation}) => {
         loading={loading}
       />
       <Text style={styles.linkText}>
-        if you don't have account <Text onPress={() => navigation.navigate('Register')} style={styles.link}>Register</Text>
+        if you don't have account{" "}
+        <Text
+          onPress={() => navigation.navigate("Register")}
+          style={styles.link}
+        >
+          Register
+        </Text>
       </Text>
     </View>
   );
